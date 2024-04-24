@@ -119,6 +119,11 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Custom ignores
+.myenv/
+myenev/
+.DS_Store
+
 # Environments
 .env
 .venv
