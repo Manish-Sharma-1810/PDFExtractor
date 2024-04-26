@@ -1,0 +1,20 @@
+# Ignore files and directories commonly not needed in Docker image
+.git
+.vscode
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore development and system files
+*.log
+*.cfg
+*.ini
+*.swp
+.DS_Store
+
+# Ignore virtual environment directory if you're using one
+venv/
+myenv/
+.venv/
+.myenv/
