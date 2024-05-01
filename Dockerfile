@@ -16,6 +16,8 @@ COPY app/ .
 # Stage 2: Create a lightweight production image
 FROM python:3.12-slim
 
+LABEL maintainer="manishkumar.sharma0103@gmail.com"
+
 WORKDIR /app
 
 # Copy installed dependencies from the builder stage
