@@ -7,8 +7,8 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --upgrade pip && \
+    pip3 install --no-cache-dir -r requirements.txt
 
 # Copy the application code
 COPY app/ .
@@ -24,8 +24,8 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/gunicorn
 
-# Copy the application code
-COPY . .
+# Copy the application code from the builder stage
+COPY --from=builder /app /app
 
 # Set environment variables
 ENV FLASK_APP=app.py
@@ -35,4 +35,4 @@ ENV FLASK_ENV=production
 EXPOSE 5000
 
 # Run the Flask application with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn3", "--bind", "0.0.0.0:5000", "app:app", "--workers=5", "--timeout=60"]

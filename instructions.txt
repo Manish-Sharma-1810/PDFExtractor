@@ -1,0 +1,17 @@
+1. Create s3 bucket
+aws s3api create-bucket --bucket dev-flask-lab --region us-east-1
+
+2. Copy the code to s3 bucket
+aws s3 cp ./app/ s3://dev-flask-lab/PDFExtractor/app/ --recursive && \
+aws s3 cp ./Dockerfile s3://dev-flask-lab/PDFExtractor/Dockerfile && \
+aws s3 cp ./.dockerignore s3://dev-flask-lab/PDFExtractor/.dockerignore && \
+aws s3 cp ./requirements.txt s3://dev-flask-lab/PDFExtractor/requirements.txt
+
+3. Download the code to ec2 instance
+aws s3 cp s3://dev-flask-lab/PDFExtractor/ /home/ubuntu/PDFExtractor/ --recursive
+
+4. Build the docker image
+docker build -t manishdocker1810/pdfextractor:v1.0 /home/ubuntu/PDFExtractor/
+
+5. Run docker container
+docker container run -d --name pdfextractor -p 5000:5000 manishdocker1810/pdfextractor:v1.0

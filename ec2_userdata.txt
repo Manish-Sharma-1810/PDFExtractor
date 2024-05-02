@@ -1,0 +1,15 @@
+#!/bin/bash
+apt update -y
+apt upgrade -y
+apt install python3-pip unzip less -y
+apt install jq -y
+pip3 install boto3
+curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip -q awscliv2.zip
+./aws/install
+rm -r awscliv2.zip
+wget -qO- https://get.docker.com | sh
+apt update -y
+systemctl start docker
+systemctl enable docker
+docker run hello-world
