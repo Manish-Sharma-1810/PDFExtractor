@@ -3,11 +3,7 @@ from botocore.exceptions import ClientError
 
 import settings
 
-s3_client = boto3.client('s3',
-                        aws_access_key_id=settings.access_key_id,
-                        aws_secret_access_key=settings.secret_access_key,
-                        region_name=settings.aws_region
-                    )
+s3_client = boto3.client('s3', region_name=settings.aws_region)
 
 # Function to upload file to S3 bucket
 def upload_to_s3(file):

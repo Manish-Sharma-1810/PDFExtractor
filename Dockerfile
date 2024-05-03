@@ -35,4 +35,4 @@ ENV FLASK_ENV=production
 EXPOSE 5000
 
 # Run the Flask application with Gunicorn
-CMD ["gunicorn3", "--bind", "0.0.0.0:5000", "app:app", "--workers=5", "--timeout=60"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app", "--workers=5", "--timeout=60"]
