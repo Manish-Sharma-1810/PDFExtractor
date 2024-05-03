@@ -14,4 +14,4 @@ aws s3 cp s3://dev-flask-lab/PDFExtractor/ /home/ubuntu/PDFExtractor/ --recursiv
 docker build -t manishdocker1810/pdfextractor:v1.0 /home/ubuntu/PDFExtractor/
 
 5. Run docker container
-docker container run -d --name pdfextractor -p 5000:5000 manishdocker1810/pdfextractor:v1.0
+docker container run -d --name pdfextractor -p 5000:5000 --restart on-failure manishdocker1810/pdfextractor:v1.0
