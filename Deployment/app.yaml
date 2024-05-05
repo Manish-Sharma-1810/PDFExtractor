@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This CloudFormation template orchestrates the creation of IAM roles and EC2 instances using nested stacks.
+
+Parameters:
+  DeploymentBucket:
+    Description: Name of the deployment bucket
+    Type: String
+    Default: dev-flask-lab
+  EnvironmentName:
+    Description: Name of the environment
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+      - test
+
+Resources:
+  IAMStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${DeploymentBucket}.s3.amazonaws.com/templates/iam.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+  EC2Stack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: IAMStack
+    Properties:
+      TemplateURL: !Sub https://${DeploymentBucket}.s3.amazonaws.com/templates/ec2.yaml
+      Parameters:
+        DeploymentBucket: !Ref DeploymentBucket
+        EnvironmentName: !Ref EnvironmentName

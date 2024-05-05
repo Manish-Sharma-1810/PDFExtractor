@@ -1,3 +1,6 @@
+################ Instructions to deploy Flask application on EC2 ################
+
+
 1. Create s3 bucket
 aws s3api create-bucket --bucket dev-flask-lab --region us-east-1
 
@@ -5,13 +8,25 @@ aws s3api create-bucket --bucket dev-flask-lab --region us-east-1
 aws s3 cp ./app/ s3://dev-flask-lab/PDFExtractor/app/ --recursive && \
 aws s3 cp ./Dockerfile s3://dev-flask-lab/PDFExtractor/Dockerfile && \
 aws s3 cp ./.dockerignore s3://dev-flask-lab/PDFExtractor/.dockerignore && \
-aws s3 cp ./requirements.txt s3://dev-flask-lab/PDFExtractor/requirements.txt
+aws s3 cp ./requirements.txt s3://dev-flask-lab/PDFExtractor/requirements.txt && \
+aws s3 cp ./Deployment/ s3://dev-flask-lab/templates/ --recursive
 
-3. Download the code to ec2 instance
-aws s3 cp s3://dev-flask-lab/PDFExtractor/ /home/ubuntu/PDFExtractor/ --recursive
+3. Create CloudFormation stack for the application
+aws cloudformation create-stack --stack-name app --template-url https://dev-flask-lab.s3.amazonaws.com/templates/app.yaml --capabilities CAPABILITY_NAMED_IAM --region us-east-1
 
-4. Build the docker image
-docker build -t manishdocker1810/pdfextractor:v1.0 /home/ubuntu/PDFExtractor/
+4. Check app stack
+aws cloudformation describe-stacks --stack-name app --query "Stacks[0].StackStatus" --output text --region us-east-1
+aws cloudformation describe-stacks --stack-name app --query "Stacks[0].Outputs" --output table --region us-east-1
 
-5. Run docker container
-docker container run -d --name pdfextractor -p 5000:5000 --restart on-failure manishdocker1810/pdfextractor:v1.0
+
+
+
+##### Manage your container with Portainer #####
+
+# Create a volume for Portainer's data:
+docker volume create portainer_data
+
+# Create the Portainer container
+docker container run -d --name portainer -p 8080:9000 \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v portainer_data:/data portainer/portainer
