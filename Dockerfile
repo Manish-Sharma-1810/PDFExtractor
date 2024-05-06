@@ -29,7 +29,7 @@ COPY --from=builder /app /app
 
 # Set environment variables
 ENV FLASK_APP=app.py
-ENV FLASK_ENV=production
+ENV FLASK_ENV=dev
 
 # Expose the port your app runs on
 EXPOSE 5000

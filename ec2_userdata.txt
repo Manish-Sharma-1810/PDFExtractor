@@ -1,6 +1,7 @@
 #!/bin/bash
 apt update -y
 apt upgrade -y
+apt install jq -y
 apt install python3-pip unzip less -y
 pip3 install boto3
 curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -11,8 +12,14 @@ wget -qO- https://get.docker.com | sh
 apt update -y
 systemctl start docker
 systemctl enable docker
-docker run hello-world
 usermod -aG docker ssm-user
-aws s3 cp s3://dev-flask-lab/PDFExtractor/ /home/ubuntu/PDFExtractor/ --recursive
+aws s3 cp s3://${DeploymentBucket}/PDFExtractor/ /home/ubuntu/PDFExtractor/ --recursive
 docker build -t manishdocker1810/pdfextractor:v1.0 /home/ubuntu/PDFExtractor/
-docker container run -d --name pdfextractor -p 5000:5000 --restart on-failure manishdocker1810/pdfextractor:v1.0
+docker container run -d --name pdfextractor -p 80:5000 -e AWS_REGION=${AWS::Region} -e BUCKET_NAME=${DeploymentBucket} --restart on-failure manishdocker1810/pdfextractor:v1.0
+docker volume create portainer_data
+docker container run -d --name portainer -p 8080:9000 --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+
+
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document > /home/ubuntu/PDFExtractor/app/ec2_metadata.json
+

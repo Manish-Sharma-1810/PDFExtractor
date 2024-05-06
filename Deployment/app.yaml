@@ -14,7 +14,7 @@ Parameters:
       - dev
       - prod
       - test
-
+      
 Resources:
   IAMStack:
     Type: AWS::CloudFormation::Stack

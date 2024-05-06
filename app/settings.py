@@ -1,2 +1,2 @@
-aws_region = 'us-east-1'
-bucket_name = 'dev-flask-lab'
+aws_region = 'AWS_REGION'
+bucket_name = 'BUCKET_NAME'

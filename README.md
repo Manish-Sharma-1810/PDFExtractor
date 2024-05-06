@@ -24,24 +24,37 @@ PDFExtractor is a Flask application integrated with various AWS services to stre
   - **CloudWatch:** Monitoring and logging service for application health and performance metrics.
 - **Docker:** Containerization platform for packaging the Flask application and its dependencies.
 
-## Usage
+# Instructions to deploy Flask application on EC2
 
-### Clone Repository:
+### 1. Clone Repository:
 ```
 git clone https://github.com/Manish-Sharma-1810/PDFExtractor.git
 ```
 
-### Create a python virtual environment
+### 2. Create s3 bucket
 ```
-python3 -m venv venv
-```
-
-### Activate the virtual environment
-```
-source venv/bin/activate
+aws s3api create-bucket --bucket dev-flask-lab --region us-east-1
 ```
 
-### Install dependencies
+### 3. Copy the code to s3 bucket
 ```
-pip3 install -r requirements.txt
+aws s3 cp ./app/ s3://dev-flask-lab/PDFExtractor/app/ --recursive && \
+aws s3 cp ./Dockerfile s3://dev-flask-lab/PDFExtractor/Dockerfile && \
+aws s3 cp ./.dockerignore s3://dev-flask-lab/PDFExtractor/.dockerignore && \
+aws s3 cp ./requirements.txt s3://dev-flask-lab/PDFExtractor/requirements.txt && \
+aws s3 cp ./Deployment/ s3://dev-flask-lab/templates/ --recursive
+```
+
+### 4. Create CloudFormation stacks for the application
+```
+aws cloudformation create-stack --stack-name app --template-url https://dev-flask-lab.s3.amazonaws.com/templates/app.yaml --capabilities CAPABILITY_NAMED_IAM --region us-east-1
+```
+
+### 5. Check app stack status
+```
+aws cloudformation describe-stacks --stack-name app --query "Stacks[0].StackStatus" --output text --region us-east-1
+```
+### 6. Check app stack outputs
+```
+aws cloudformation describe-stacks --stack-name app --query "Stacks[0].Outputs" --output table --region us-east-1
 ```
