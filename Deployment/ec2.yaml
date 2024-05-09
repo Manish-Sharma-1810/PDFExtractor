@@ -74,6 +74,7 @@ Resources:
           apt update -y
           apt upgrade -y
           apt install jq -y
+          apt install nginx -y
           apt install python3-pip unzip less -y
           pip3 install boto3
           curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -85,11 +86,16 @@ Resources:
           systemctl start docker
           systemctl enable docker
           usermod -aG docker ssm-user
+          TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+          PUBLIC_IP=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4)
           aws s3 cp s3://${DeploymentBucket}/PDFExtractor/ /home/ubuntu/PDFExtractor/ --recursive
-          docker build -t manishdocker1810/pdfextractor:v1.0 /home/ubuntu/PDFExtractor/
-          docker container run -d --name pdfextractor -p 80:5000 -e AWS_REGION=${AWS::Region} -e BUCKET_NAME=${DeploymentBucket} --restart on-failure manishdocker1810/pdfextractor:v1.0
-          docker volume create portainer_data
-          docker container run -d --name portainer -p 8080:9000 --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+          chmod +x /home/ubuntu/PDFExtractor/start_containers.sh
+          curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document > /home/ubuntu/PDFExtractor/ec2_metadata.json
+          AWS_REGION=${AWS::Region} BUCKET_NAME=${DeploymentBucket} /home/ubuntu/PDFExtractor/start_containers.sh
+          sed -i "s/public_ip/$PUBLIC_IP/g" /home/ubuntu/PDFExtractor/flask_reverse_proxy.conf
+          cp /home/ubuntu/PDFExtractor/flask_reverse_proxy.conf /etc/nginx/sites-available/flask_reverse_proxy.conf
+          ln -s /etc/nginx/sites-available/flask_reverse_proxy.conf /etc/nginx/sites-enabled/
+          systemctl restart nginx
 Outputs:
   AccountId:
     Description: AWS Account ID

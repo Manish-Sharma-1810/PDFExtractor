@@ -5,26 +5,38 @@
 aws s3api create-bucket --bucket dev-flask-lab --region us-east-1
 
 2. Copy the code to s3 bucket
-aws s3 cp ./app/ s3://dev-flask-lab/PDFExtractor/app/ --recursive && \
-aws s3 cp ./Dockerfile s3://dev-flask-lab/PDFExtractor/Dockerfile && \
-aws s3 cp ./.dockerignore s3://dev-flask-lab/PDFExtractor/.dockerignore && \
-aws s3 cp ./requirements.txt s3://dev-flask-lab/PDFExtractor/requirements.txt && \
+aws s3 cp ./PDFExtractor/ s3://dev-flask-lab/PDFExtractor/ --recursive && \
 aws s3 cp ./Deployment/ s3://dev-flask-lab/templates/ --recursive
 
+
 3. Create CloudFormation stack for the application
-aws cloudformation create-stack --stack-name app --template-url https://dev-flask-lab.s3.amazonaws.com/templates/app.yaml --capabilities CAPABILITY_NAMED_IAM --region us-east-1
+aws cloudformation create-stack --stack-name app --template-url https://dev-flask-lab.s3.amazonaws.com/templates/app.yaml --parameters ParameterKey=DeploymentBucket,ParameterValue=dev-flask-lab --capabilities CAPABILITY_NAMED_IAM --region us-east-1
 
 4. Check app stack
 aws cloudformation describe-stacks --stack-name app --query "Stacks[0].StackStatus" --output text --region us-east-1
 aws cloudformation describe-stacks --stack-name app --query "Stacks[0].Outputs" --output table --region us-east-1
 
+5. Nginx configuration
+nano /etc/nginx/sites-available/flask_reverse_proxy.conf
+sudo ln -s /etc/nginx/sites-available/flask_reverse_proxy.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
 
 
 
-##### Manage your container with Portainer #####
+
+
+########## Manage your container with Portainer ##########
 
 # Create a volume for Portainer's data:
 docker volume create portainer_data
 
 # Create the Portainer container
 docker container run -d --name portainer -p 8080:9000 --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+
+
+docker container run -d --name pdfextractor1 -p 5002:5000 -e AWS_REGION=us-east-1 -e BUCKET_NAME=dev-flask-lab1 --restart on-failure manishdocker1810/pdfextractor:v1.0
+
+
+######## References ###########
+https://chat.openai.com/share/1ad16498-6745-479d-88fb-2326b51812bd
