@@ -5,7 +5,7 @@ Parameters:
   NameOfService:
     Description: The name of the service this stack is to be used for
     Type: String
-    Default: Flask-Server
+    Default: flask-app-server
   EnvironmentName:
     Description: Name of the environment
     Type: String
@@ -59,8 +59,15 @@ Resources:
       Monitoring: true
       IamInstanceProfile: 
         Fn::ImportValue: !Sub ${EnvironmentName}-ec2-instance-profile
-      SecurityGroups:
-        - Fn::ImportValue: !Sub ${EnvironmentName}-ec2-security-group
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: 'true'
+          DeleteOnTermination: 'true'
+          Description: Primary network interface
+          DeviceIndex: '0'
+          GroupSet:
+            - Fn::ImportValue: !Sub ${EnvironmentName}-ec2-security-group-id
+          SubnetId:
+            Fn::ImportValue: !Sub ${EnvironmentName}-public-subnet1-id
       Tags:
         - Key: Name
           Value: !Ref NameOfService
@@ -112,10 +119,8 @@ Outputs:
   InstanceId:
     Description: ID of the EC2 instance
     Value: !Ref MyEC2Instance
-  EC2SecurityGroup:
-    Description: Security Group ID of the EC2 instance
-    Value: 
-      Fn::ImportValue: !Sub ${EnvironmentName}-ec2-security-group
+    Export:
+      Name: !Sub ${EnvironmentName}-instance-id
   PublicDnsName:
     Description: Public DNS name of the EC2 instance
     Value: !GetAtt MyEC2Instance.PublicDnsName
@@ -128,7 +133,19 @@ Outputs:
       - RegionAMIConfig
       - !Ref AWS::Region
       - AMI
+  VpcId:
+    Description: VPC ID of the EC2 instance
+    Value: !GetAtt MyEC2Instance.VpcId
+  SubnetId:
+    Description: Subnet ID of the EC2 instance
+    Value: !GetAtt MyEC2Instance.SubnetId
+  InstanceSecurityGroupId:
+    Description: Security Group ID of the EC2 instance
+    Value: 
+      Fn::ImportValue: !Sub ${EnvironmentName}-ec2-security-group-id
   SSMParameter:
-    Description: SSM Parameter
+    Description: SSM Parameter for the deployment bucket
     Value: !Ref MySSMParameter
+    Export:
+      Name: deployment-bucket-ssm-parameter
     

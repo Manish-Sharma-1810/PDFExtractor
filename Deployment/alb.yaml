@@ -3,13 +3,13 @@ Description: Create an Application Load Balancer with a target group and a liste
 
 Parameters:
   LoadBalancerName:
-    Description: The name of the Application Load Balancer
+    Description: Name of the Application Load Balancer
     Type: String
-    Default: alb
+    Default: flask-app-alb
   TargetGroupName:
-    Description: The name of the target group
+    Description: Name of the target group
     Type: String
-    Default: target-group
+    Default: flask-app-target-group
   EnvironmentName:
     Description: Name of the environment
     Type: String
@@ -17,6 +17,7 @@ Parameters:
     AllowedValues:
       - dev
       - prod
+      - test
 Resources:
   MyApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -48,7 +49,7 @@ Resources:
       Port: 80
       TargetType: instance
       HealthCheckEnabled: true
-      HealthCheckPath: /index.html
+      HealthCheckPath: /
       HealthCheckPort: traffic-port
       HealthCheckProtocol: HTTP
       HealthCheckIntervalSeconds: 10

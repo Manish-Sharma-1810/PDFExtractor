@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Create an EC2 Instance Profile and Security Group
+Description: Create an EC2 Instance Profile with neccessary permissions
 
 Parameters:
   EnvironmentName:
@@ -38,27 +38,7 @@ Resources:
       Path: /
       Roles:
         - !Ref MyEC2Role
-  EC2SecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub ${EnvironmentName}-EC2SecurityGroup
-      GroupDescription: Allow HTTP and HTTPS inbound and outbound traffic from anywhere.
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '80'
-          ToPort: '80'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '443'
-          ToPort: '443'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '8080'
-          ToPort: '8080'
-          CidrIp: 0.0.0.0/0
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-EC2SecurityGroup
+
 Outputs:
   AccountId:
     Description: AWS Account ID
@@ -85,8 +65,3 @@ Outputs:
     Value: !Ref MyEC2InstanceProfile
     Export:
       Name: !Sub ${EnvironmentName}-ec2-instance-profile
-  EC2SecurityGroup:
-    Description: EC2 Security Group
-    Value: !Ref EC2SecurityGroup
-    Export:
-      Name: !Sub ${EnvironmentName}-ec2-security-group

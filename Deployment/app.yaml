@@ -22,11 +22,29 @@ Resources:
       TemplateURL: !Sub https://${DeploymentBucket}.s3.amazonaws.com/templates/iam.yaml
       Parameters:
         EnvironmentName: !Ref EnvironmentName
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${DeploymentBucket}.s3.amazonaws.com/templates/vpc.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
   EC2Stack:
     Type: AWS::CloudFormation::Stack
-    DependsOn: IAMStack
+    DependsOn:
+      - IAMStack
+      - VPCStack
     Properties:
       TemplateURL: !Sub https://${DeploymentBucket}.s3.amazonaws.com/templates/ec2.yaml
+      Parameters:
+        DeploymentBucket: !Ref DeploymentBucket
+        EnvironmentName: !Ref EnvironmentName
+  ALBStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - VPCStack
+      - EC2Stack
+    Properties:
+      TemplateURL: !Sub https://${DeploymentBucket}.s3.amazonaws.com/templates/alb.yaml
       Parameters:
         DeploymentBucket: !Ref DeploymentBucket
         EnvironmentName: !Ref EnvironmentName
