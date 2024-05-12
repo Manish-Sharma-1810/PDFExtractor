@@ -15,28 +15,3 @@ aws cloudformation create-stack --stack-name app --template-url https://dev-flas
 4. Check app stack
 aws cloudformation describe-stacks --stack-name app --query "Stacks[0].StackStatus" --output text --region us-east-1
 aws cloudformation describe-stacks --stack-name app --query "Stacks[0].Outputs" --output table --region us-east-1
-
-5. Nginx configuration
-nano /etc/nginx/sites-available/flask_reverse_proxy.conf
-sudo ln -s /etc/nginx/sites-available/flask_reverse_proxy.conf /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-
-
-
-
-
-########## Manage your container with Portainer ##########
-
-# Create a volume for Portainer's data:
-docker volume create portainer_data
-
-# Create the Portainer container
-docker container run -d --name portainer -p 8080:9000 --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
-
-
-docker container run -d --name pdfextractor1 -p 5002:5000 -e AWS_REGION=us-east-1 -e BUCKET_NAME=dev-flask-lab1 --restart on-failure manishdocker1810/pdfextractor:v1.0
-
-
-######## References ###########
-https://chat.openai.com/share/1ad16498-6745-479d-88fb-2326b51812bd

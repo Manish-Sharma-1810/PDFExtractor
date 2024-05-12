@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Launch a t2.micro Ubuntu Server 24.04 LTS (HVM) (64_x86) on EC2 in us-east-1 region in the default vpc
+Description: Launch a t2.micro Ubuntu Server 24.04 LTS (HVM) (64_x86) on EC2 in
+  us-east-1 region in the default vpc
 
 Parameters:
   NameOfService:
@@ -57,17 +58,18 @@ Resources:
         - !Ref AWS::Region
         - AMI
       Monitoring: true
-      IamInstanceProfile: 
-        Fn::ImportValue: !Sub ${EnvironmentName}-ec2-instance-profile
+      IamInstanceProfile: !ImportValue
+        Fn::Sub: ${EnvironmentName}-ec2-instance-profile
       NetworkInterfaces:
         - AssociatePublicIpAddress: 'true'
           DeleteOnTermination: 'true'
           Description: Primary network interface
           DeviceIndex: '0'
           GroupSet:
-            - Fn::ImportValue: !Sub ${EnvironmentName}-ec2-security-group-id
-          SubnetId:
-            Fn::ImportValue: !Sub ${EnvironmentName}-public-subnet1-id
+            - !ImportValue
+              Fn::Sub: ${EnvironmentName}-ec2-security-group-id
+          SubnetId: !ImportValue
+            Fn::Sub: ${EnvironmentName}-public-subnet1-id
       Tags:
         - Key: Name
           Value: !Ref NameOfService
@@ -75,8 +77,8 @@ Resources:
           Value: !Ref AWS::Region
         - Key: Environment
           Value: !Ref EnvironmentName
-      UserData:
-        Fn::Base64: !Sub |
+      UserData: !Base64
+        Fn::Sub: |
           #!/bin/bash
           apt update -y
           apt upgrade -y
@@ -141,11 +143,10 @@ Outputs:
     Value: !GetAtt MyEC2Instance.SubnetId
   InstanceSecurityGroupId:
     Description: Security Group ID of the EC2 instance
-    Value: 
-      Fn::ImportValue: !Sub ${EnvironmentName}-ec2-security-group-id
+    Value: !ImportValue
+      Fn::Sub: ${EnvironmentName}-ec2-security-group-id
   SSMParameter:
     Description: SSM Parameter for the deployment bucket
     Value: !Ref MySSMParameter
     Export:
       Name: deployment-bucket-ssm-parameter
-    

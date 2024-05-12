@@ -27,10 +27,13 @@ Resources:
       Scheme: internet-facing
       IpAddressType: ipv4
       Subnets:
-        - Fn::ImportValue: !Sub ${EnvironmentName}-public-subnet1-id
-        - Fn::ImportValue: !Sub ${EnvironmentName}-public-subnet2-id
+        - !ImportValue
+          Fn::Sub: ${EnvironmentName}-public-subnet1-id
+        - !ImportValue
+          Fn::Sub: ${EnvironmentName}-public-subnet2-id
       SecurityGroups:
-        - Fn::ImportValue: !Sub ${EnvironmentName}-alb-security-group-id
+        - !ImportValue
+          Fn::Sub: ${EnvironmentName}-alb-security-group-id
       LoadBalancerAttributes:
         - Key: idle_timeout.timeout_seconds
           Value: '30'
@@ -43,8 +46,8 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Name: !Sub ${EnvironmentName}-${TargetGroupName}
-      VpcId:
-        Fn::ImportValue: !Sub ${EnvironmentName}-vpc-id
+      VpcId: !ImportValue
+        Fn::Sub: ${EnvironmentName}-vpc-id
       Protocol: HTTP
       Port: 80
       TargetType: instance
@@ -59,8 +62,8 @@ Resources:
       Matcher:
         HttpCode: 200
       Targets:
-        - Id:
-            Fn::ImportValue: !Sub ${EnvironmentName}-instance-id
+        - Id: !ImportValue
+            Fn::Sub: ${EnvironmentName}-instance-id
           Port: 80
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds

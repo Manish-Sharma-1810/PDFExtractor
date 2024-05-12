@@ -38,16 +38,13 @@ aws s3api create-bucket --bucket dev-flask-lab --region us-east-1
 
 ### 3. Copy the code to s3 bucket
 ```
-aws s3 cp ./app/ s3://dev-flask-lab/PDFExtractor/app/ --recursive && \
-aws s3 cp ./Dockerfile s3://dev-flask-lab/PDFExtractor/Dockerfile && \
-aws s3 cp ./.dockerignore s3://dev-flask-lab/PDFExtractor/.dockerignore && \
-aws s3 cp ./requirements.txt s3://dev-flask-lab/PDFExtractor/requirements.txt && \
+aws s3 cp ./PDFExtractor/ s3://dev-flask-lab/PDFExtractor/ --recursive && \
 aws s3 cp ./Deployment/ s3://dev-flask-lab/templates/ --recursive
 ```
 
 ### 4. Create CloudFormation stacks for the application
 ```
-aws cloudformation create-stack --stack-name app --template-url https://dev-flask-lab.s3.amazonaws.com/templates/app.yaml --capabilities CAPABILITY_NAMED_IAM --region us-east-1
+aws cloudformation create-stack --stack-name app --template-url https://dev-flask-lab.s3.amazonaws.com/templates/app.yaml --parameters ParameterKey=DeploymentBucket,ParameterValue=dev-flask-lab --capabilities CAPABILITY_NAMED_IAM --region us-east-1
 ```
 
 ### 5. Check app stack status

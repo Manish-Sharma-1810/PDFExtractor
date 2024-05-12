@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: This CloudFormation template orchestrates the creation of IAM roles and EC2 instances using nested stacks.
+Description: This CloudFormation template orchestrates the creation of IAM roles
+  and EC2 instances using nested stacks.
 
 Parameters:
   DeploymentBucket:
@@ -14,7 +15,7 @@ Parameters:
       - dev
       - prod
       - test
-      
+
 Resources:
   IAMStack:
     Type: AWS::CloudFormation::Stack
@@ -46,5 +47,4 @@ Resources:
     Properties:
       TemplateURL: !Sub https://${DeploymentBucket}.s3.amazonaws.com/templates/alb.yaml
       Parameters:
-        DeploymentBucket: !Ref DeploymentBucket
         EnvironmentName: !Ref EnvironmentName
