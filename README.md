@@ -17,12 +17,24 @@ PDFExtractor is a Flask application integrated with various AWS services to stre
 ## Technologies Used
 
 - **Python Flask:** Web framework for building the application backend.
+- **Gunicorn:** Python WSGI HTTP server for running Python applications, including Flask, in a production environment.
 - **AWS Services:**
   - **S3:** Storage service used for storing uploaded PDFs and extracted JSON files.
   - **SQS:** Message queue service for decoupling and asynchronous processing.
   - **Lambda:** Serverless compute service used for content extraction.
   - **CloudWatch:** Monitoring and logging service for application health and performance metrics.
+  - **CloudFormation:** Infrastructure as Code service for provisioning and managing AWS resources.
+  - **VPC (Virtual Private Cloud):** Isolated virtual network in the AWS cloud.
+  - **Public Subnets:** Subnets with routes to the internet gateway for resources that need to be publicly accessible.
+  - **Internet Gateway:** Allows communication between instances in the VPC and the internet.
+  - **Route Tables:** Controls the flow of network traffic within and in/out of an AWS VPC, enabling secure and efficient communication between resources within the VPC and with external networks.
+  - **Network ACLs (Access Control Lists):** Acts as a firewall for controlling traffic in and out of one or more subnets.
+  - **Security Groups:** Acts as a virtual firewall for the associated AWS resources, controlling inbound and outbound traffic.
+  - **Application Load Balancer:** Distributes incoming application traffic across multiple targets, such as Amazon EC2 instances.
+  - **Route53:** Domain Name System (DNS) web service for routing traffic to various AWS resources.
 - **Docker:** Containerization platform for packaging the Flask application and its dependencies.
+- **Nginx:** Web server and reverse proxy server for handling client requests listening on port 80, and routing them to Flask application containers.
+
 
 # Instructions to deploy Flask application on EC2
 
