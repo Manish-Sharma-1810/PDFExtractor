@@ -26,6 +26,9 @@ PDFExtractor is a Flask application integrated with various AWS services to stre
 
 # Instructions to deploy Flask application on EC2
 
+## **Note:**
+replace the ***dev-flask-lab*** with your own ***BUCKET_NAME***
+
 ### 1. Clone Repository:
 ```
 git clone https://github.com/Manish-Sharma-1810/PDFExtractor.git

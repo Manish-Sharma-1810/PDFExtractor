@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Create a VPC with two public subnets with an internet gateway, a public route table, and a security group
+Description: Create a VPC with two public subnets with an internet gateway, a public route table, and a security group for EC2, and a security group for ALB 
 
 Parameters:
   VpcCidr:
