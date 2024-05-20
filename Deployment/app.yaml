@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: This CloudFormation template orchestrates the creation of IAM roles
-  and EC2 instances using nested stacks.
+Description: This CloudFormation template orchestrates the creation of IAM role, VPC, Subnets, Security Groups, EC2 instance, and Application Load Balancer using nested stacks.
 
 Parameters:
   DeploymentBucket:
